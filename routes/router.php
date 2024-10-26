@@ -5,7 +5,7 @@ use App\Plugins\Di\Factory;
 $di = Factory::getDi();
 $router = $di->getShared('router');
 
-//$router->setBasePath('/web_backend_test_catering_api');
+$router->setBasePath('/web_backend_test_catering_api');
 
 require_once '../routes/routes.php';
 

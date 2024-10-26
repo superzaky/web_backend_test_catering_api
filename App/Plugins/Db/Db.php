@@ -19,6 +19,7 @@ class Db implements IDb {
      */
     public function __construct(IConnection $connectionImplementation) {
         $this->connection = $this->connect($connectionImplementation);
+        $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
     /**
@@ -53,6 +54,16 @@ class Db implements IDb {
             return $this->stmt->execute($bind);
         }
         return $this->stmt->execute();
+    }
+
+    public function fetchObject(string $query, array $bind = []): \stdClass | bool {
+        $this->stmt = $this->connection->prepare($query);
+        if ($bind) {
+            $this->stmt->execute($bind);
+            return $this->stmt->fetch(PDO::FETCH_OBJ);
+        }
+        $this->stmt->execute();
+        return $this->stmt->fetch(PDO::FETCH_OBJ);
     }
 
     /**
