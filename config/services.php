@@ -4,6 +4,7 @@ require_once '../vendor/autoload.php';
 
 use App\Plugins;
 use App\Plugins\Di\Factory;
+use App\Repositories\FacilityRepository;
 
 $di = Factory::getDi();
 
@@ -23,4 +24,8 @@ $di->setShared('db', function () use ($config) {
     $dbAdapter = new Plugins\Db\Adapters\MySql();
     $dbAdapter->setDb($db);
     return $db;
+});
+
+$di->setShared('facilityrepository', function () {
+    return new FacilityRepository();
 });

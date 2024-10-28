@@ -6,3 +6,4 @@
 $router->get('/test', App\Controllers\IndexController::class . '@test');
 $router->get('/', App\Controllers\IndexController::class . '@test');
 $router->post('/facility', App\Controllers\IndexController::class . '@create');
+$router->get('/facility/{facilityId}', App\Controllers\IndexController::class . '@read');

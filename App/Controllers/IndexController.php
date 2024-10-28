@@ -5,11 +5,12 @@ namespace App\Controllers;
 use App\Plugins\Http\Response as Status;
 use App\Plugins\Http\Exceptions;
 use App\Models\Facility;
-use App\Repositories\FacilityRepository;
-use App\Plugins\Di\Factory;
+use App\Models\Tag;
+
 
 //use Store\Model\{Customer, Product}; <--- TODO: implementeer dit voor later ipv bovenstaande
 class IndexController extends BaseController {
+    protected $facilityrepository=null;
     /**
      * Controller function used to test whether the project was set up properly.
      * @return void
@@ -21,15 +22,25 @@ class IndexController extends BaseController {
 
     public function create() {
         $data = json_decode(file_get_contents('php://input'));
+        $tags = array_map(function ($name) {
+            return new Tag($name);
+        }, $data->tags);
 
-        $di = Factory::getDi();
-        $di->setShared('facilityrepository', function () {
-            return new FacilityRepository();
-        });
-        $facility = new Facility($data->name);
+        $facility = new Facility($data->name, $data->location_id, ...$tags);
         $facility_repo = $this->__get('facilityrepository');
         $res= $facility_repo->create($facility);
-        // Respond with 200 (OK):
-        (new Status\Ok(['message' => 'res : '. $res]))->send();
+        (new Status\Ok($res))->send();
+    }
+
+    public function read() {
+        $data = json_decode(file_get_contents('php://input'));
+        $actual_link = "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";   
+        $parts = parse_url($actual_link);    
+        $last = basename( end($parts) );
+
+        $facility_repo = $this->__get('facilityrepository');
+        $res= $facility_repo->retrieve((int) $last);
+
+        (new Status\Ok($res))->send();
     }
 }
