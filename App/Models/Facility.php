@@ -24,6 +24,14 @@ class Facility {
         $this->tags = $tags;
     }
 
+    function get_id() {
+        return $this->id;
+    }
+
+    function set_id(int $id) {
+        $this->id = $id;
+    }
+
     function get_name() {
         return $this->name;
     }
