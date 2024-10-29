@@ -1,0 +1,246 @@
+{
+	"info": {
+		"_postman_id": "a3b1f551-218a-41c3-91cb-12193cc16372",
+		"name": "DTT Back end assessment – Catering API",
+		"description": "The Postman collection for the DTT backend assessment test: Catering API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10768255"
+	},
+	"item": [
+		{
+			"name": "Test API",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/test",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"test"
+					]
+				},
+				"description": "API call used to test local development environment and database connection.\n\nShould print _'Hello World!'_ if all is OK."
+			},
+			"response": []
+		},
+		{
+			"name": "Create facility",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"AMC\",\r\n    \"location_id\": 1,\r\n    \"tags\": [\"Medisch\", \"Prio\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/facility",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"facility"
+					]
+				},
+				"description": "Creates a facility..."
+			},
+			"response": []
+		},
+		{
+			"name": "Get facility",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/facility/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"facility",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get facilities",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/facility?facilities=1,2",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"facility"
+					],
+					"query": [
+						{
+							"key": "facilities",
+							"value": "1,2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update facility",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{   \r\n    \"name\":\"Huisarts\",\r\n    \"location_id\": 2,\r\n    \"tags\": [\"Medisch\", \"Geen prio\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/facility/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"facility",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete facility",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/facility/1",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"facility",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search facilities",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/facility/list?tag_name=sch&facility_name=amc&city=ams",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"facility",
+						"list"
+					],
+					"query": [
+						{
+							"key": "tag_name",
+							"value": "sch"
+						},
+						{
+							"key": "facility_name",
+							"value": "amc"
+						},
+						{
+							"key": "city",
+							"value": "ams"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost/web_backend_test_catering_api",
+			"type": "string"
+		}
+	]
+}
