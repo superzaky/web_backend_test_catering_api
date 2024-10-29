@@ -6,11 +6,10 @@ class Tag {
     private $id;
     /** @var string */
     private $name;
-     /**
+    /**
      * @var Facility[] $facilities
      */
     private array $facilities = [];
-
 
     /**
      * @param string $name

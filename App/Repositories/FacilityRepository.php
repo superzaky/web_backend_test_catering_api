@@ -13,7 +13,7 @@ class FacilityRepository {
     /** @var Db|null */
     private $db = null;
 
-    public function __construct() {        
+    public function __construct() {
         $di = Factory::getDi();
         $this->db = $di->getShared('db');
     }
@@ -25,16 +25,19 @@ class FacilityRepository {
         $this->db->beginTransaction();
         try {
             $query = 'INSERT INTO facilities (name, creation_date, location_id) VALUES (:name, :creation_date, :location_id)';
-            $bind = [':name' => $facility->get_name(), ':creation_date' =>  date("Y-m-d"), 
-                ':location_id' => $facility->get_location_id()];
-    
+            $bind = [
+                ':name' => $facility->get_name(),
+                ':creation_date' =>  date("Y-m-d"),
+                ':location_id' => $facility->get_location_id()
+            ];
+
             if ($this->db->executeQuery($query, $bind)) {
                 $query = 'SELECT *
                             FROM facilities
                             WHERE id = :id';
                 $facility_id = $this->db->getLastInsertedId();
                 $bind = [':id' => $facility_id];
-    
+
                 foreach ($facility->get_tags() as $tag) {
                     $insert_tag_query = 'INSERT IGNORE INTO tags (name) VALUES (:name)';
                     $bind_tag_query = [':name' => $tag->get_name()];
@@ -42,20 +45,20 @@ class FacilityRepository {
                     $select_tag_query = 'SELECT *
                         FROM tags
                         WHERE name = :name';
-    
+
                     $tag_id = $this->db->getLastInsertedId();
                     $existing_tag = $this->db->fetchObject($select_tag_query, $bind_tag_query);
-                   
+
                     if ($tag_id == 0) {
                         $tag_id = $existing_tag->id;
-                    } 
-                    
+                    }
+
                     $insert_facility_tags_query = 'INSERT INTO facility_tags (facility_id, tag_id) VALUES (:facility_id, :tag_id)';
                     $bind_facility_tags_query = [':facility_id' => $facility_id, 'tag_id' => $tag_id];
-    
+
                     $this->db->executeQuery($insert_facility_tags_query, $bind_facility_tags_query);
                 }
-    
+
                 $fetched_object = $this->db->fetchObject($query, $bind);
                 $fetched_object = $this->retrieve($fetched_object->id);
                 $this->db->commit();
@@ -84,9 +87,12 @@ class FacilityRepository {
         $this->db->beginTransaction();
         try {
             $query = 'UPDATE facilities SET name=:name, location_id=:location_id WHERE id = :id';
-            $bind = [':name' => $facility->get_name(), ':location_id' => $facility->get_location_id(),
-                ':id' => $facility->get_id()];
-    
+            $bind = [
+                ':name' => $facility->get_name(),
+                ':location_id' => $facility->get_location_id(),
+                ':id' => $facility->get_id()
+            ];
+
             if ($this->db->executeQuery($query, $bind)) {
                 $query = 'DELETE FROM facility_tags WHERE facility_id = :id';
                 $bind = [':id' => $facility->get_id()];
@@ -98,17 +104,17 @@ class FacilityRepository {
                         $select_tag_query = 'SELECT *
                             FROM tags
                             WHERE name = :name';
-        
+
                         $tag_id = $this->db->getLastInsertedId();
                         $existing_tag = $this->db->fetchObject($select_tag_query, $bind_tag_query);
-                       
+
                         if ($tag_id == 0) {
                             $tag_id = $existing_tag->id;
-                        } 
-                        
+                        }
+
                         $insert_facility_tags_query = 'INSERT INTO facility_tags (facility_id, tag_id) VALUES (:facility_id, :tag_id)';
                         $bind_facility_tags_query = [':facility_id' => $facility->get_id(), 'tag_id' => $tag_id];
-        
+
                         $this->db->executeQuery($insert_facility_tags_query, $bind_facility_tags_query);
                     }
                     $query = 'SELECT * FROM facilities WHERE id = :id';
@@ -121,7 +127,6 @@ class FacilityRepository {
                 } else {
                     return null;
                 }
-    
             } else {
                 return null;
             }
@@ -146,7 +151,7 @@ class FacilityRepository {
     }
 
     public function searchBy(string $facility_name = null, string $tag_name = null, string $city = null): array | bool {
-        $query ='SELECT facilities.*, locations.city, locations.address, locations.zip_code, locations.country_code, locations.phone_number, GROUP_CONCAT(tags.name) as tags
+        $query = 'SELECT facilities.*, locations.city, locations.address, locations.zip_code, locations.country_code, locations.phone_number, GROUP_CONCAT(tags.name) as tags
             FROM facilities
             JOIN locations ON facilities.location_id = locations.id
             LEFT JOIN facility_tags ON facilities.id = facility_tags.facility_id
