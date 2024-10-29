@@ -67,6 +67,21 @@ class Db implements IDb {
     }
 
     /**
+     * @param string $query
+     * @param array $bind
+     * @return array|bool Returns an array or false on failure
+     */
+    public function fetchObjects(string $query, array $bind = []): array | bool {
+        $this->stmt = $this->connection->prepare($query);
+        if ($bind) {
+            $this->stmt->execute($bind);
+            return $this->stmt->fetchAll(PDO::FETCH_OBJ);
+        }
+        $this->stmt->execute();
+        return $this->stmt->fetchAll(PDO::FETCH_OBJ);
+    }
+
+    /**
      * Function to get last inserted id
      * @param mixed $name
      * @return int

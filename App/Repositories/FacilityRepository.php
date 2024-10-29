@@ -120,4 +120,32 @@ class FacilityRepository {
         $bind = [':id' => $id];
         return $this->db->executeQuery($query, $bind);
     }
+
+    public function searchBy(string $facility_name = null, string $tag_name = null, string $city = null): array | bool {
+        $query ='SELECT facilities.*, locations.city, locations.address, locations.zip_code, locations.country_code, locations.phone_number, GROUP_CONCAT(tags.name) as tags
+            FROM facilities
+            JOIN locations ON facilities.location_id = locations.id
+            LEFT JOIN facility_tags ON facilities.id = facility_tags.facility_id
+            LEFT JOIN tags ON facility_tags.tag_id = tags.id
+            WHERE 1=1';
+
+        if ($facility_name) {
+            $query .= " AND facilities.name LIKE ?";
+            $bind[] = '%' . $facility_name . '%';
+        }
+
+        if ($tag_name) {
+            $query .= " AND tags.name LIKE ?";
+            $bind[] = '%' . $tag_name . '%';
+        }
+
+        if ($city) {
+            $query .= " AND locations.city LIKE ?";
+            $bind[] = '%' . $city . '%';
+        }
+
+        $query .= " GROUP BY facilities.id";
+
+        return $this->db->fetchObjects($query, $bind);
+    }
 }

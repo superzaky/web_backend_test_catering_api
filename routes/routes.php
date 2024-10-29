@@ -10,3 +10,4 @@ $router->get('/facility', App\Controllers\IndexController::class . '@readMultipl
 $router->get('/facility/(\d+)', App\Controllers\IndexController::class . '@read');
 $router->put('/facility/(\d+)', App\Controllers\IndexController::class . '@update');
 $router->delete('/facility/(\d+)', App\Controllers\IndexController::class . '@delete');
+$router->get('/facility/list', App\Controllers\IndexController::class . '@search');
