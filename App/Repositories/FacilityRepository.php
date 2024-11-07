@@ -26,15 +26,12 @@ class FacilityRepository {
         try {
             $query = 'INSERT INTO facilities (name, creation_date, location_id) VALUES (:name, :creation_date, :location_id)';
             $bind = [
-                ':name' => $facility->get_name(),
-                ':creation_date' =>  date("Y-m-d"),
+                ':name' => $facility->getName(),
+                ':creation_date' =>  $facility->getCreationDate(),
                 ':location_id' => $facility->get_location_id()
             ];
 
             if ($this->db->executeQuery($query, $bind)) {
-                $query = 'SELECT *
-                            FROM facilities
-                            WHERE id = :id';
                 $facility_id = $this->db->getLastInsertedId();
                 $bind = [':id' => $facility_id];
 
@@ -59,8 +56,7 @@ class FacilityRepository {
                     $this->db->executeQuery($insert_facility_tags_query, $bind_facility_tags_query);
                 }
 
-                $fetched_object = $this->db->fetchObject($query, $bind);
-                $fetched_object = $this->retrieve($fetched_object->id);
+                $fetched_object = $this->retrieve($facility_id);
                 $this->db->commit();
                 return $fetched_object;
             } else {
@@ -88,7 +84,7 @@ class FacilityRepository {
         try {
             $query = 'UPDATE facilities SET name=:name, location_id=:location_id WHERE id = :id';
             $bind = [
-                ':name' => $facility->get_name(),
+                ':name' => $facility->getName(),
                 ':location_id' => $facility->get_location_id(),
                 ':id' => $facility->get_id()
             ];

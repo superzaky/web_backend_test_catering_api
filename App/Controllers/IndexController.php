@@ -24,7 +24,7 @@ class IndexController extends BaseController {
                 return new Tag($name);
             }, $data->tags);
 
-            $facility = new Facility($data->name, $data->location_id, ...$tags);
+            $facility = new Facility($data->name, $data->location_id, date("Y-m-d"), ...$tags);
             $facility_repo = $this->__get('facilityrepository');
             $res = $facility_repo->create($facility);
             (new Status\Ok($res))->send();
@@ -79,7 +79,7 @@ class IndexController extends BaseController {
             $tags = array_map(function ($name) {
                 return new Tag($name);
             }, $data->tags);
-            $facility = new Facility($data->name, $data->location_id, ...$tags);
+            $facility = new Facility($data->name, $data->location_id, null, ...$tags);
             $facility->set_id((int) $last);
             $facility_repo = $this->__get('facilityrepository');
             $res = $facility_repo->update($facility);

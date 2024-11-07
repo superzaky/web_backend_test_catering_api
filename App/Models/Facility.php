@@ -7,7 +7,7 @@ class Facility {
     /** @var string */
     private $name;
     /** @var string */
-    private $creation_date;
+    private $creationDate;
     /** @var integer */
     private $location_id;
     /**
@@ -18,10 +18,11 @@ class Facility {
     /**
      * @param string $name
      */
-    public function __construct(string $name, int $location_id, Tag ...$tags) {
+    public function __construct(string $name, int $location_id, string $creationDate = null, Tag ...$tags) {
         $this->name = $name;
         $this->location_id = $location_id;
         $this->tags = $tags;
+        $this->creationDate = $creationDate;
     }
 
     function get_id() {
@@ -32,7 +33,11 @@ class Facility {
         $this->id = $id;
     }
 
-    function get_name() {
+    function getCreationDate() {
+        return $this->creationDate;
+    }
+
+    function getName() {
         return $this->name;
     }
 
