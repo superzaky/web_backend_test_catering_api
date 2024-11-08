@@ -18,10 +18,17 @@ class FacilityRepository {
         $this->db = $di->getShared('db');
     }
 
-    /*
-    @throws Exception if an operation fails
-    */
-    public function create(Facility $facility): \stdClass | bool {
+
+    /**
+     * Creates a new facility in the database.
+     *
+     * @param Facility $facility The facility object to be created.
+     *
+     * @return \stdClass|bool|null The created facility object with its ID, or null if creation fails.
+     *
+     * @throws InternalServerError If an exception occurs during the database operation.
+     */
+    public function create(Facility $facility): \stdClass | bool | null {
         $this->db->beginTransaction();
         try {
             $query = 'INSERT INTO facilities (name, creation_date, location_id) VALUES (:name, :creation_date, :location_id)';
@@ -68,7 +75,19 @@ class FacilityRepository {
         }
     }
 
-    public function retrieve(int $id): \stdClass | bool {
+
+    /**
+     * Retrieves a facility from the database by its ID.
+     *
+     * @param int $id The ID of the facility to retrieve.
+     *
+     * @return \stdClass|bool|null The retrieved facility object with its details, location, and tags.
+     * If the facility is not found, returns null.
+     * If an error occurs during the database operation, returns false.
+     *
+     * @throws InternalServerError If an exception occurs during the database operation.
+     */
+    public function retrieve(int $id): \stdClass | bool | null {
         $query = 'SELECT locations.*, facilities.*, GROUP_CONCAT(tags.name) as tags
             FROM facilities
             JOIN locations ON facilities.location_id = locations.id
@@ -146,31 +165,49 @@ class FacilityRepository {
         }
     }
 
-    public function searchBy(string $facility_name = null, string $tag_name = null, string $city = null): array | bool {
+    /**
+     * Searches facilities based on provided criteria.
+     *
+     * @param string|null $facilityName The name of the facility to search for.
+     * @param string|null $tagName The name of the tag to search for.
+     * @param string|null $city The city where the facility is located.
+     *
+     * @return array|bool An array of matching facilities or false if an error occurs.
+     * Each facility object contains facility details, location details, and tags.
+     * If no parameters are provided, all facilities are returned.
+     */
+    public function searchBy(string $facilityName = null, string $tagName = null, string $city = null): array | bool {
         $query = 'SELECT facilities.*, locations.city, locations.address, locations.zip_code, locations.country_code, locations.phone_number, GROUP_CONCAT(tags.name) as tags
             FROM facilities
             JOIN locations ON facilities.location_id = locations.id
             LEFT JOIN facility_tags ON facilities.id = facility_tags.facility_id
-            LEFT JOIN tags ON facility_tags.tag_id = tags.id
-            WHERE 1=1';
-
-        if ($facility_name) {
-            $query .= " AND facilities.name LIKE ?";
-            $bind[] = '%' . $facility_name . '%';
-        }
-
-        if ($tag_name) {
-            $query .= " AND tags.name LIKE ?";
-            $bind[] = '%' . $tag_name . '%';
-        }
-
-        if ($city) {
-            $query .= " AND locations.city LIKE ?";
-            $bind[] = '%' . $city . '%';
-        }
+            LEFT JOIN tags ON facility_tags.tag_id = tags.id';
 
         $query .= " GROUP BY facilities.id";
 
+        $conditions = [];
+        $bind = [];
+
+        if ($tagName) {
+            $conditions[] = "GROUP_CONCAT(tags.name) LIKE ?";
+            $bind[] = '%' . $tagName . '%';
+        }   
+
+        if ($facilityName) {
+            $conditions[] = "facilities.name LIKE ?";
+            $bind[] = '%' . $facilityName . '%';
+        }
+
+        if ($city) {
+            $conditions[] = "locations.city LIKE ?";
+            $bind[] = '%' . $city . '%';
+        }
+
+        if (!empty($conditions)) {
+            $query .= " HAVING " . implode(" AND ", $conditions);
+        }
+
         return $this->db->fetchObjects($query, $bind);
     }
+
 }

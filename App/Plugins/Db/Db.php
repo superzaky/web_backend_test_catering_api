@@ -56,7 +56,7 @@ class Db implements IDb {
         return $this->stmt->execute();
     }
 
-    public function fetchObject(string $query, array $bind = []): \stdClass | bool {
+    public function fetchObject(string $query, array $bind = []): \stdClass | bool | null {
         $this->stmt = $this->connection->prepare($query);
         if ($bind) {
             $this->stmt->execute($bind);
